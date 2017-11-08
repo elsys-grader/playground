@@ -1,0 +1,5 @@
+FROM python:3.6
+COPY grader.py grader.py
+COPY task.py task.py
+
+CMD python test.py
