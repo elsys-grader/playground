@@ -31,7 +31,7 @@ def docker_container_create(docker_image, command, crippled=True,
                             **kwargs):
     kwargs['labels'] = labels
     kwargs['image'] = docker_image
-    kwargs['command'] = command
+    #kwargs['command'] = command
 
     kwargs.setdefault('auto_remove', True)
     kwargs.setdefault('detach', True)
