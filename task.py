@@ -1,5 +1,8 @@
 import grader
 import time
 
-grader.start_container()
-print(grader.exec_step("echo a"))
+
+if __name__ == '__main__':
+    grader.start_container()
+    rc, stdout, _, _ = grader.exec_step("echo a")
+    print("return code: {} stdout: {}".format(rc, stdout))

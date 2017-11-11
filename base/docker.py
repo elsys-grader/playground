@@ -96,8 +96,5 @@ def docker_container_exec(container, command):
 
     exec_result = client.api.exec_inspect(exec_id)
     rc = exec_result['ExitCode']
-
-    print(client.api.exec_inspect(exec_id))
-
     stdout = stderr = stdplex
     return rc, stdout, stderr, stdplex

@@ -21,5 +21,5 @@ if __name__ == '__main__':
                                      crippled=False, 
                                      environment={'PORT': disp.port(),
                                                   'AUTH': DEBUG_AUTH_TOKEN})
-    print(container)
+    print(container.decode("utf8"))
     disp.stop()
