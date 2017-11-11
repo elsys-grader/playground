@@ -6,12 +6,13 @@ from base.docker import docker_container_exec
 from base.docker import docker_container_run
 from base.utils import wait_for_port
 import time
+import sys
 DEBUG_AUTH_TOKEN = '12345'
 
 
 if __name__ == '__main__':
-    grading_image = docker_image_build("teacher", "Dockerfile.grading", ".")
-    testing_image = docker_image_build("student", "Dockerfile.testing", ".")
+    grading_image = docker_image_build("teacher", "Dockerfile.grading", sys.argv[1])
+    testing_image = docker_image_build("student", "Dockerfile.testing", sys.argv[1])
     test_file_path = "cat.c"
     disp = Dispatcher(testing_image, test_file_path)
     disp.start()
