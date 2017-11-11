@@ -5,16 +5,12 @@ import os
 
 
 class Dispatcher(threading.Thread):
-    def __init__(self, docker_image, input_file):
+    def __init__(self, docker_image, input_file, port=0):
         threading.Thread.__init__(self)
-        self.server = SimpleXMLRPCServer(('0.0.0.0', 0), allow_none=True)
+        self.server = SimpleXMLRPCServer(('0.0.0.0', port), allow_none=True)
         self.server.register_instance(self)
         self.docker_image = docker_image
         self.input_file = input_file
-
-    def port(self):
-        _, port = self.server.server_address
-        return port
 
     def run(self):
         self.server.serve_forever()

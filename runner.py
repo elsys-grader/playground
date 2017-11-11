@@ -1,26 +1,20 @@
-from xmlrpc.server import SimpleXMLRPCServer
-from base.docker import docker_image_build
 from base.dispatcher import Dispatcher
-from base.docker import docker_container_create
-from base.docker import docker_container_exec
-from base.docker import docker_container_run
-from base.utils import wait_for_port
 import time
 import sys
+import argparse
+from base.utils import wait_for_port
 DEBUG_AUTH_TOKEN = '12345'
 
 
 if __name__ == '__main__':
-    grading_image = docker_image_build("teacher", "Dockerfile.grading", sys.argv[1])
-    testing_image = docker_image_build("student", "Dockerfile.testing", sys.argv[1])
-    test_file_path = "cat.c"
-    disp = Dispatcher(testing_image, test_file_path)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', '-p', help='port to listen on', default=0, type=int)
+    parser.add_argument('image', help='image to use')
+    parser.add_argument('input', help='input file to use')
+    args = vars(parser.parse_args())
+
+    disp = Dispatcher(args['image'], args['input'])
     disp.start()
 
-    wait_for_port('localhost', disp.port())
-    container = docker_container_run(grading_image, ['python', 'task.py'],
-                                     crippled=False, 
-                                     environment={'PORT': disp.port(),
-                                                  'AUTH': DEBUG_AUTH_TOKEN})
-    print(container.decode("utf8"))
-    disp.stop()
+    wait_for_port('localhost', disp.server.server_address[1])
+    print("Running at: {}".format(disp.server.server_address))

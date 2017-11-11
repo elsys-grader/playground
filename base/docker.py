@@ -1,31 +1,6 @@
 import docker
 
 
-client = docker.from_env()
-labels = {'org.elsys-bg.grader': 'True'}
-tag_prefix = 'elsysbg.org/grader/'
-
-_log_config_none = {
-    'type': None,
-    'config': {},
-}
-
-
-def docker_image_build(tag, dockerfile, context):
-    tag = tag_prefix + tag
-
-    client.images.build(
-        path=context,
-        tag=tag,
-        rm=True,
-        pull=True,
-        forcerm=True,
-        dockerfile=dockerfile,
-        labels=labels)
-
-    return tag
-
-
 def docker_container_prepare(docker_image, command, crippled=True,
                              volumes={},
                              **kwargs):
@@ -69,12 +44,6 @@ def docker_container_create(docker_image, command, **kwargs):
     kwargs = docker_container_prepare(docker_image, command, **kwargs)
     kwargs.setdefault('detach', True)
     return client.containers.create(**kwargs)
-
-
-def docker_container_run(docker_image, command, **kwargs):
-    kwargs = docker_container_prepare(docker_image, command, **kwargs)
-    kwargs.setdefault('detach', False)
-    return client.containers.run(**kwargs)
 
 
 def docker_container_exec(container, command):
