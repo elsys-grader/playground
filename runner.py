@@ -5,6 +5,7 @@ from base.docker import docker_container_create
 from base.docker import docker_container_exec
 from base.docker import docker_container_run
 import time
+DEBUG_AUTH_TOKEN = '12345'
 
 
 if __name__ == '__main__':
@@ -15,8 +16,9 @@ if __name__ == '__main__':
     disp.start()
 
     time.sleep(1)
-
-    container = docker_container_run(grading_image, ['python', 'task.py'], crippled=False)
+    container = docker_container_run(grading_image, ['python', 'task.py'],
+                                     crippled=False, 
+                                     environment={'PORT': disp.port(),
+                                                  'AUTH': DEBUG_AUTH_TOKEN})
     print(container)
-
     disp.stop()

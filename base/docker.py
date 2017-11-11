@@ -66,13 +66,13 @@ def docker_container_prepare(docker_image, command, crippled=True,
 
 
 def docker_container_create(docker_image, command, **kwargs):
-    kwargs = docker_container_prepare(docker_image, command, kwargs)
+    kwargs = docker_container_prepare(docker_image, command, **kwargs)
     kwargs.setdefault('detach', True)
     return client.containers.create(**kwargs)
 
 
 def docker_container_run(docker_image, command, **kwargs):
-    kwargs = docker_container_prepare(docker_image, command, kwargs)
+    kwargs = docker_container_prepare(docker_image, command, **kwargs)
     kwargs.setdefault('detach', False)
     return client.containers.run(**kwargs)
 

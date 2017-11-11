@@ -7,15 +7,20 @@ import os
 class Dispatcher(threading.Thread):
     def __init__(self, docker_image, input_file):
         threading.Thread.__init__(self)
-        self.server = SimpleXMLRPCServer(('0.0.0.0', 9000), allow_none=True)
+        self.server = SimpleXMLRPCServer(('0.0.0.0', 0), allow_none=True)
         self.server.register_instance(self)
         self.docker_image = docker_image
         self.input_file = input_file
 
+    def port(self):
+        _, port = self.server.server_address
+        return port
+
     def run(self):
         self.server.serve_forever()
 
-    def start_container(self):
+    def start_container(self, token):
+        assert(token == '12345')
         input_file_host_path = os.path.abspath(self.input_file)
         self.input_file_container_path = '/grader/testing/input.file'
 
@@ -27,5 +32,6 @@ class Dispatcher(threading.Thread):
     def stop(self):
         self.server.shutdown()
 
-    def exec_step(self, command):
+    def exec_step(self, token, command):
+        assert(token == '12345')
         return docker_container_exec(self.container, command)
