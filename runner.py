@@ -4,6 +4,7 @@ from base.dispatcher import Dispatcher
 from base.docker import docker_container_create
 from base.docker import docker_container_exec
 from base.docker import docker_container_run
+from base.utils import wait_for_port
 import time
 DEBUG_AUTH_TOKEN = '12345'
 
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     disp = Dispatcher(testing_image, test_file_path)
     disp.start()
 
-    time.sleep(1)
+    wait_for_port('localhost', disp.port())
     container = docker_container_run(grading_image, ['python', 'task.py'],
                                      crippled=False, 
                                      environment={'PORT': disp.port(),
