@@ -1,6 +1,16 @@
 import docker
 
 
+client = docker.from_env()
+labels = {'org.elsys-bg.grader': 'True'}
+tag_prefix = 'elsysbg.org/grader/'
+
+_log_config_none = {
+    'type': None,
+    'config': {},
+}
+
+
 def docker_container_prepare(docker_image, command, crippled=True,
                              volumes={},
                              **kwargs):

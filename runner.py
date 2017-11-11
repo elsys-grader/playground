@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('input', help='input file to use')
     args = vars(parser.parse_args())
 
-    disp = Dispatcher(args['image'], args['input'])
+    disp = Dispatcher(args['image'], args['input'], args['port'])
     disp.start()
 
     wait_for_port('localhost', disp.server.server_address[1])
