@@ -26,16 +26,15 @@ def docker_image_build(tag, dockerfile, context):
     return tag
 
 
-def docker_container_create(docker_image, command, crippled=True,
-                            volumes={},
-                            **kwargs):
+def docker_container_prepare(docker_image, command, crippled=True,
+                             volumes={},
+                             **kwargs):
     kwargs['labels'] = labels
     kwargs['image'] = docker_image
-    #kwargs['command'] = command
+    kwargs['command'] = command
 
-    kwargs.setdefault('auto_remove', True)
-    kwargs.setdefault('detach', True)
-    kwargs.setdefault('log_config', _log_config_none)
+    kwargs.setdefault('auto_remove', False)
+    #kwargs.setdefault('log_config', _log_config_none)
     kwargs.setdefault('oom_kill_disable', False)
     kwargs.setdefault('oom_score_adj', 1000)
     kwargs.setdefault('privileged', False)
@@ -63,7 +62,19 @@ def docker_container_create(docker_image, command, crippled=True,
 
     kwargs['volumes'] = docker_volumes
 
+    return kwargs
+
+
+def docker_container_create(docker_image, command, **kwargs):
+    kwargs = docker_container_prepare(docker_image, command, kwargs)
+    kwargs.setdefault('detach', True)
     return client.containers.create(**kwargs)
+
+
+def docker_container_run(docker_image, command, **kwargs):
+    kwargs = docker_container_prepare(docker_image, command, kwargs)
+    kwargs.setdefault('detach', False)
+    return client.containers.run(**kwargs)
 
 
 def docker_container_exec(container, command):
@@ -86,24 +97,7 @@ def docker_container_exec(container, command):
     exec_result = client.api.exec_inspect(exec_id)
     rc = exec_result['ExitCode']
 
+    print(client.api.exec_inspect(exec_id))
+
     stdout = stderr = stdplex
     return rc, stdout, stderr, stdplex
-
-
-class DockerRunner:
-    def stop(self):
-        try:
-            self.container.kill()
-        except docker.errors.NotFound:
-            pass
-
-    def __enter__(self):
-        self.container.start()
-        self.container = client.containers.get(self.container.id)
-        if self.container.status != 'running':
-            raise RuntimeError("Docker container not running")
-
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.stop()

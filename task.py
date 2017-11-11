@@ -1,3 +1,6 @@
 import grader
+import time
 
-grader.exec_command("command")
+time.sleep(50)
+grader.start_container()
+print(grader.exec_step("echo a"))
